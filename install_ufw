@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Vérifie si l'utilisateur est root
+if [ "$(id -u)" != "0" ]; then
+   echo "Ce script doit être exécuté en tant que root" 1>&2
+   exit 1
+fi
+
+# Installe UFW si ce n'est pas déjà fait
+echo "Installation de UFW..."
+apt-get update
+apt-get install ufw -y
+
+# Réinitialise les règles par défaut pour s'assurer que la configuration est propre
+echo "Réinitialisation des règles par défaut..."
+ufw --force reset
+
+# Définit les politiques par défaut
+echo "Configuration des politiques par défaut..."
+ufw default deny incoming
+ufw default allow outgoing
+
+# Ouvre le port pour SSH (22)
+echo "Autorisation du trafic SSH (Port 22)..."
+ufw allow 22
+
+# Ouvre le port pour HTTP (80) et HTTPS (443) si vous hébergez un serveur web
+echo "Autorisation du trafic Web (Ports 80, 443)..."
+ufw allow 80
+ufw allow 443
+
+# Ajoutez ici d'autres règles selon vos besoins, par exemple pour autoriser le trafic pour un serveur de mail, FTP, ou des applications spécifiques
+
+# Active UFW
+echo "Activation de UFW..."
+ufw --force enable
+
+echo "Configuration de UFW terminée."
+
+# Copiez ce script dans un fichier, par exemple setup_ufw.sh, rendez-le exécutable avec chmod +x setup_ufw.sh, puis exécutez-le avec sudo ./setup_ufw.sh.
